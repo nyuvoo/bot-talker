@@ -1,0 +1,115 @@
+import random
+from urllib import request
+from bs4 import BeautifulSoup
+
+# списки и словари для рандома
+
+questions = {'Мера инертности тела - это?': 'масса',
+             'Процесс сосредоточения населения и экономической жизни в городах?': 'урбанизация',
+             'Основная структурная и функциональная единица жизни?': 'клетка',
+             'Достаточно сложные молекулы белка, ускоряющие химические реакции в клетках - это?': 'ферменты',
+             '''Организация политической власти, осуществляющая управление обществом
+             и обладающая суверенитетом?''': 'государство',}
+
+inter_facts = ['У гусеницы больше мышц, чем у человека',
+               'Галлий - металл, который тает в руках (температура плавления - 29,76°C)'
+               'Низкочастотный крик горбатого кита - самый громкий звук, изданный живым существом.',
+               'Гранит проводит звук в 10 раз быстрее воздуха.']
+
+greetings_f_p = ['привет', 'здрасьте', 'здравствуйте', 'здрасте', 'дарова', 'хай']
+greetings = ['Привет :D', 'Добрый день!', 'Бонжур)']
+
+watsupp = ['как дела', 'как жизнь', 'как делишки']
+watsupp_ans = ['Всё чики-пуки', 'Нормально', 'Всё окей', 'Всё нормально)']
+
+bots_name_que = ['ты кто', 'кто ты', 'ты вообще кто', 'как тебя зовут']
+bots_name = ['У меня довольно необычное имя - Шелдон!', 'Я - Шелдон', 'Меня зовут Шелдон']
+
+what_can_do = ['умеешь', 'что умеешь', 'что ты умеешь']
+can_do = ['"погода"', '"интересный факт"', '"привет"', 'давай поговорим' , '"викторина"', 'моё имя', 'сменить имя']
+
+lets_talk = ['давай поговорим', 'поболтаем', 'давай поболтаем']
+good_ans = ['У меня тоже всё замечательно!', 'Отлично', 'Это очень хорошо)']
+bad_ans = ['Всё будет хорошо', 'Не переживайте)']
+neutral_ans = ['Простите, я Вас не поняла.', 'Понятно)']
+what_mood = ['Как Вы сейчас описали бы своё настроение?', 'Как прошёл Ваш день? :)', 'Как Вы себя чувствуете?',
+                 'Как настроение? :D']
+
+dont_know = ['Повторите ещё раз, пожалуйста.', 'Я вас не понял :(', 'Я вас не понимаю, простите :(',
+             'Я Вас не понял, повторите, пожалуйста']
+
+goodbye_f_p = ['выход', 'пока', 'до свидания']
+goodbye = ['Досвидули', 'Оревуар', 'адьё', 'Пока бро']
+
+# функции, если нашлось ключевое слово
+
+def question():        # загадки
+    current_question, current_que_answer = random.choice(list(questions.items()))
+    print(current_question,'\nОтвет - одно слово\nНапишите "стоп", если сдаёетесь.')
+    ans = input()
+    while not (ans == 'стоп' or ans == current_que_answer):
+        print('Неправильно')
+        ans = input()
+    if ans == current_que_answer:
+        print('Да!')
+    else:
+        print('ок, стоп\n', current_que_answer)
+
+def weather():
+    resp_spb = request.urlopen("https://yandex.ru/pogoda/?lat=59.93894958&lon=30.31563568")
+    soup_spb = BeautifulSoup(resp_spb, 'html.parser')
+    temperature_spb = str(soup_spb.find_all('span', class_='temp__value')[1])
+    temperature_spb = temperature_spb[26:-7]
+    outside = str(soup_spb.find_all('div', class_='link__condition day-anchor i-bem'))[87:-7]
+    print('В Санкт-Петербурге', temperature_spb, '°C,', outside)
+
+def mood():
+    print(random.choice(what_mood))
+    mood_message = input()
+    if 'хорош' in mood_message or 'прекрасн' in mood_message or 'отличн' in mood_message \
+            or'замечательн' in mood_message:
+        print(random.choice(good_ans))
+    elif 'плох' in mood_message or 'ужас' in mood_message or 'отвратительн' in mood_message:
+        print(random.choice(bad_ans))
+    else:
+        print(random.choice(neutral_ans))
+
+user_name = ''
+print(random.choice(greetings))
+message = input().lower()
+
+# перебор значений в сообщении от пользователя
+
+while message not in goodbye_f_p:
+    if message in greetings_f_p:
+        print(random.choice(greetings))
+    elif 'задай вопрос' in message or 'викторина' in message:
+        question()
+    elif message in watsupp:
+        print(random.choice(watsupp_ans))
+    elif 'погода' in message:
+        weather()
+    elif message in bots_name_que:
+        print(random.choice(bots_name))
+    elif message in what_can_do:
+        print('Попробуйте написать', random.choices(can_do))
+    elif message in lets_talk:
+        mood()
+    elif 'факт' in message or ('интересн' in message and 'факт' in message):
+        print(random.choice(inter_facts))
+    elif 'меня зовут' in message or 'моё имя' in message:
+        if user_name != '':
+            print('Вас зовут', user_name)
+        else:
+            print('Я не знаю Вашего имени :(')
+            ans = input('Хотите добавить своё имя?')
+            if 'да' in ans or 'хочу' in ans:
+                user_name = input('Как мне Вас называть?')
+    elif 'я хочу прменять имя' in message or 'изменить имя' in message or 'сменить имя' in message:
+        user_name = input('Хорошо, как мне Вас называть?')
+    else:
+        print(random.choice(dont_know))
+
+    message = input().lower()
+
+print(random.choice(goodbye))
