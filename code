@@ -66,13 +66,16 @@ def weather():
 def mood():
     print(random.choice(what_mood))
     mood_message = input()
-    if 'хорош' in mood_message or 'прекрасн' in mood_message or 'отличн' in mood_message \
-            or'замечательн' in mood_message:
-        print(random.choice(good_ans))
-    elif 'плох' in mood_message or 'ужас' in mood_message or 'отвратительн' in mood_message:
-        print(random.choice(bad_ans))
-    else:
-        print(random.choice(neutral_ans))
+    if 'не' not in mood_message and '?' not in mood_message:
+        if 'хорош' in mood_message or 'прекрасн' in mood_message or 'отличн' in mood_message \
+                or'замечательн' in mood_message:
+            print(random.choice(good_ans))
+        elif 'плох' in mood_message or 'ужас' in mood_message or 'отвратительн' in mood_message:
+            print(random.choice(bad_ans))
+        else:
+            print(random.choice(neutral_ans))
+     else:
+            print(random.choice(neutral_ans))
 
 user_name = ''
 print(random.choice(greetings))
